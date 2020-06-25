@@ -1,22 +1,56 @@
 <odoo>
   <data>
+
+    <template id="assets_backend" name="aws_question assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/aws_question/static/src/js/picture_exam_form.js"></script>
+        </xpath>
+    </template>
+        <template id="aws_question_abandoned_cart_onboarding_panel" name="aws_question.abandoned.cart.onboarding.panel">
+                   <t t-call="aws_question.examheader" name="consolidation_step"/>
+        </template>
        <record model="ir.ui.view" id="aws_question_picture_exam_form">
             <field name="name">aws.question.picture.exam.wizard.form</field>
             <field name="model">picture_question.aws_exam</field>
             <field name="groups_id" eval="[(4,ref('base.group_user'))]"/>
             <field name="arch" type="xml">
                 <form string="Compose Exam">
+                        <div class="oe_button_box" name="button_box">
+                                <button class="oe_stat_button" name="take_exam"
+                                    type="object"  string="Take Exam">
+                                </button>
+                        </div>
                     <group>
                         <!-- truly invisible fields for control and options -->
 
+
                         <field name="active_domain" />
                         <field name="description" />
-                        <field name="picture_ids" />
-                        <field name="question_ids" />
+                        <field name="picture_ids"  invisible="1"/>
+                        <field name="question_ids"  invisible="1"/>
+                        <field name="my_question_ids"  invisible="1"/>
                     </group>
                 </form>
             </field>
        </record>
+      <record model="ir.ui.view" id="aws_question_picture_exam_question_form">
+           <field name="name">aws.question.picture.exam.question.wizard.form</field>
+            <field name="model">picture_question.aws_exam_question</field>
+            <field name="groups_id" eval="[(4,ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <form string="Compose Exam"  banner_route="/aws_question/exam_header" js_class="aws_question_exam_question_form">
+                        <div class="oe_button_box" name="button_box">
+                                <button class="oe_stat_button" name="next_question"
+                                    type="object"  string="Next Question">
+                                </button>
+                        </div>
+                    <group>
+                        <field name="picture" />
+                        <field name="answer" />
+                    </group>
+                </form>
+            </field>
+      </record>
     <!-- explicit list view definition -->
 <!--
     <record model="ir.ui.view" id="aws_question.list">

@@ -1,6 +1,37 @@
 <odoo>
     <data>
-<!--
+        <template id="examheader">
+
+
+
+            <div id="clockdiv">
+            <div style="display:none" >
+                <span class="days" id="day"></span>
+                <div class="smalltext">Days</div>
+            </div>
+            <div style="display:none">
+                <span class="hours" id="hour"></span>
+                <div class="smalltext">Hours</div>
+            </div>
+            <div>
+                <h3 class="minutes" id="minute"></h3>
+                <h3 class="smalltext">Minutes</h3>
+            </div>
+            <div style="display:none">
+                <h3 class="seconds" id="second"></h3>
+                <h3 class="smalltext">Seconds</h3>
+            </div>
+            </div>
+            <div >
+                <button id="submitexam" onclick="window.endExam()" > Submit </button>
+            </div>
+
+            <p id="demo"></p>
+
+
+
+
+        </template>
         <template id="listing">
           <ul>
             <li t-foreach="objects" t-as="object">
@@ -11,14 +42,12 @@
           </ul>
         </template>
         <template id="object">
-          <h1><t t-esc="object.display_name"/></h1>
-          <dl>
-            <t t-foreach="object._fields" t-as="field">
-              <dt><t t-esc="field"/></dt>
-              <dd><t t-esc="object[field]"/></dd>
-            </t>
-          </dl>
+          <h1>hh</h1>
+            <div>
+
+            </div>
+          <img t-attf-src="data:image/png;base64,{{item.image}}"/>
+
         </template>
--->
     </data>
 </odoo>

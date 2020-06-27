@@ -44,7 +44,7 @@ function  countdown() {
      var hx = readCookie('remainingtime');
 
     if (hx ) {
-        d2 = d2.setMinutes ( d1.getMinutes() + parseInt(hx) );
+       d2.setMinutes ( d1.getMinutes() + parseInt(hx) );
     }
     var deadline = d2.getTime();
 

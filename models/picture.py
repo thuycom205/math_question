@@ -22,6 +22,8 @@ class aws_exam_attemp_question(models.Model):
     picture = fields.Html(string='Picture' )
 
     def next_question(self):
+        result = self.write({'answer': self.answer})
+
         answer = self.answer
 
         questionidarr = self.env.context['qid']

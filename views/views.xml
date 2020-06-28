@@ -24,7 +24,8 @@
                         <!-- truly invisible fields for control and options -->
 
 
-                        <field name="active_domain" />
+                        <field name="active_domain"  invisible="1"/>
+                        <field name="name" />
                         <field name="description" />
                         <field name="picture_ids"  invisible="1"/>
                         <field name="question_ids"  invisible="1"/>
@@ -33,6 +34,16 @@
                 </form>
             </field>
        </record>
+       <record id="aws_question_aws_exam_tree" model="ir.ui.view">
+            <field name="name">aws.question.aws.exam.tree</field>
+            <field name="model">aws_question.aws_exam</field>
+            <field name="arch" type="xml">
+                <tree string="AWS exam">
+                      <field name="name"/>
+                      <field name="description"/>
+                </tree>
+            </field>
+      </record>
       <record model="ir.ui.view" id="aws_question_picture_exam_question_form">
            <field name="name">aws.question.picture.exam.question.wizard.form</field>
             <field name="model">picture_question.aws_exam_question</field>
@@ -46,7 +57,29 @@
                         </div>
                     <group>
                         <field name="picture" />
+                        <field name="question" />
                         <field name="answer" />
+                        <field name="note" />
+                    </group>
+                </form>
+            </field>
+      </record>
+      <record model="ir.ui.view" id="aws_question_picture_exam_attemp_question_form">
+           <field name="name">aws.question.picture.exam.attemp.question.wizard.form</field>
+            <field name="model">picture_question.aws_exam_attemp_question</field>
+            <field name="groups_id" eval="[(4,ref('base.group_user'))]"/>
+            <field name="arch" type="xml">
+                <form string="Compose Exam"  banner_route="/aws_question/exam_header" js_class="aws_question_exam_question_form">
+                        <div class="oe_button_box" name="button_box">
+                                <button class="oe_stat_button" name="next_question"
+                                    type="object"  string="Next Question">
+                                </button>
+                        </div>
+                    <group>
+                        <field name="picture" />
+                        <field name="question" />
+                        <field name="answer" />
+                        <field name="note" />
                     </group>
                 </form>
             </field>
@@ -152,7 +185,7 @@
             </field>
     </record>
 
-      <record id="aws_question_aws_question_tree" model="ir.ui.view">
+    <record id="aws_question_aws_question_tree" model="ir.ui.view">
             <field name="name">aws.question.aws.question.tree</field>
             <field name="model">aws_question.aws_question</field>
             <field name="arch" type="xml">
@@ -161,6 +194,17 @@
                       <field name="answer"/>
                       <field name="priority_id"/>
                       <field name="exam_id"/>
+
+                </tree>
+            </field>
+    </record>
+
+    <record id="aws_question_aws_exam_attemp_tree" model="ir.ui.view">
+            <field name="name">aws.question.aws_exam_attemp.tree</field>
+            <field name="model">picture_question.aws_exam_attemp</field>
+            <field name="arch" type="xml">
+                <tree string="AWS exam">
+                      <field name="user_id"/>
 
                 </tree>
             </field>
@@ -219,6 +263,11 @@
       <field name="res_model">picture_question.picture_question</field>
       <field name="view_mode">tree,form</field>
     </record>
+      <record model="ir.actions.act_window" id="aws_question.action_exam_attemp_window">
+      <field name="name">aws_exam_attempt_question window</field>
+      <field name="res_model">picture_question.aws_exam_attemp</field>
+      <field name="view_mode">tree,form</field>
+    </record>
 
     <!-- Top menu item -->
     <menuitem name="aws_question" id="aws_question.menu_root"/>
@@ -230,13 +279,15 @@
               action="aws_question.action_window"/>
     <menuitem name="Question Picture" id="aws_question.menu_2_list" parent="aws_question.menu_1"
               action="aws_question.action_question_window"/>
-    <menuitem name="Exam Form Picture" id="aws_exampic" parent="aws_question.menu_2"
+    <menuitem name="Question using Picture" id="aws_exampic" parent="aws_question.menu_2"
               action="aws_question.action_window21"/>
       <menuitem name="Exam Form" id="aws_exam" parent="aws_question.menu_2"
               action="aws_question.action_window2"/>
       <menuitem name="Exam Tree" id="aws_exam_tree" parent="aws_question.menu_2"
               action="aws_question.action_window4"/>
-      <menuitem name="Exam Pic Tree" id="aws_exam_pic_tree" parent="aws_question.menu_2"
+      <menuitem name="Exam Attempt" id="aws_exam_attempt_tree" parent="aws_question.menu_2"
+              action="aws_question.action_exam_attemp_window"/>
+      <menuitem name="Exam using picture question" id="aws_exam_pic_tree" parent="aws_question.menu_2"
               action="aws_question.action_exampic_window"/>
     <menuitem name="tag" id="aws_tag" parent="aws_question.menu_3"
               action="aws_question.action_window3"/>

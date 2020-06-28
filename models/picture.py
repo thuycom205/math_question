@@ -5,7 +5,7 @@ from odoo import models, fields, api,tools, _
 class aws_axam_attemp(models.Model):
     _name = 'picture_question.aws_exam_attemp'
     _description = 'exam attemp'
-    user_id = fields.Many2one('res.partner', string='User ID')
+    user_id = fields.Many2one('res.users', store=True,string='User ID')
     exam_id = fields.Many2one('picture_question.aws_exam', string = 'Exam ID')
     finished_in_x_minutue = fields.Integer(string='finish in x minute')
     question_ids = fields.One2many('picture_question.aws_exam_attemp_question' ,'exam_id', string='Questions')
@@ -16,7 +16,40 @@ class aws_exam_attemp_question(models.Model):
     myquestion_id = fields.Many2one('picture_question.aws_exam_question', string='Question ID')
     is_correct = fields.Boolean(string="Is correct")
     answer = fields.Text(string="Answer")
+    question = fields.Text(string="Question")
+    note = fields.Text(string="Note")
     exam_id = fields.Many2one('picture_question.aws_exam_attemp' , string='Exam')
+    picture = fields.Html(string='Picture' )
+
+    def next_question(self):
+        answer = self.answer
+
+        questionidarr = self.env.context['qid']
+        attemp_id = self.env.context['exam_attemp']
+        myid = self.id
+
+        question_attemp = self.env['picture_question.aws_exam_attemp_question'].browse(myid)
+
+
+        question_attemp.write({'answer' : answer})
+
+
+        x = myid + 1
+        action = {
+            'name': _('Question'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'picture_question.aws_exam_attemp_question',
+        }
+
+        action['context'] = {'form_view_initial_mode': 'edit','qid' : questionidarr, 'exam_attemp' : attemp_id}
+
+        action.update({
+            'view_mode': 'form',
+            'res_id': x,
+        })
+
+        return action
+
 
 
 
@@ -25,6 +58,8 @@ class aws_exam_question(models.Model):
     name = fields.Char()
     picture = fields.Html(string='Picture' )
     answer = fields.Text(string='Answer')
+    question = fields.Text(string='Question')
+    note = fields.Text(string='Note')
     score = fields.Integer(string='Score')
     is_correct = fields.Boolean(string='Is correct')
     exam_id = fields.Many2one('picture_question.aws_exam', string='Exam ID')
@@ -40,35 +75,6 @@ class aws_exam_question(models.Model):
                 question.picture = picture
             else:
                 question.picture = False
-    def next_question(self):
-        answer = self.answer
-
-        questionidarr = self.env.context['qid']
-        attemp_id = self.env.context['exam_attemp']
-        myid = self.id
-
-        question_attemp = self.env['picture_question.aws_exam_attemp_question'].search([('exam_id', '=', attemp_id),('myquestion_id', '=', myid)])
-
-        if question_attemp:
-            for qattem in question_attemp:
-                qattem.write({'answer' : answer})
-
-
-        x = myid + 1
-        action = {
-            'name': _('Question'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'picture_question.aws_exam_question',
-        }
-
-        action['context'] = {'form_view_initial_mode': 'edit','qid' : questionidarr, 'exam_attemp' : attemp_id}
-
-        action.update({
-            'view_mode': 'form',
-            'res_id': x,
-        })
-
-        return action
 
 
 class aws_exam(models.Model):
@@ -111,25 +117,36 @@ class aws_exam(models.Model):
         #Create questions for attemp exam
 
         for exam in self:
-            myquestion_ids = exam['my_question_ids']
+            picture_ids = exam['picture_ids']
             array_question = []
             array_question_attempt = []
 
-            for questionId in myquestion_ids:
-                x = questionId['id']
-                array_question.append(x)
+            for picture_id in picture_ids:
+                question_ids = picture_id['question_ids']
 
-                question_attempt_val  = {}
-                question_attempt_val['exam_id'] = exam_attempt.id
-                question_attempt_val['myquestion_id'] = x
-                array_question_attempt.append(question_attempt_val)
+                for question_id in question_ids:
+                    x = 1
+                    question_attempt_val  = {}
+                    question_attempt_val['exam_id'] = exam_attempt.id
+                    question_attempt_val['myquestion_id'] = question_id['id']
+                    questionTxt = question_id['question']
+                    noteTxt = question_id['note']
 
-            exam_attempt_question = self.env['picture_question.aws_exam_attemp_question'].create(array_question_attempt)
+                    html = picture_id['picture']
+                    question_attempt_val['picture'] = html
+                    question_attempt_val['question'] = questionTxt
+                    question_attempt_val['note'] = noteTxt
+
+                    array_question_attempt.append(question_attempt_val)
+                    created_question =self.env['picture_question.aws_exam_attemp_question'].create(question_attempt_val)
+                    array_question.append(created_question.id)
+
+            # results = self.env['picture_question.aws_exam_attemp_question'].create(array_question_attempt)
 
         action = {
             'name': _('Debit Notes'),
             'type': 'ir.actions.act_window',
-            'res_model': 'picture_question.aws_exam_question',
+            'res_model': 'picture_question.aws_exam_attemp_question',
             }
         action['context'] = {'form_view_initial_mode': 'edit' , 'qid' : array_question, 'exam_attemp' : exam_attempt.id}
 

@@ -17,7 +17,7 @@
                 <h3 class="minutes" id="minute"></h3>
                 <h3 class="smalltext">Minutes</h3>
             </div>
-            <div style="display:none">
+            <div style="display">
                 <h3 class="seconds" id="second"></h3>
                 <h3 class="smalltext">Seconds</h3>
             </div>
